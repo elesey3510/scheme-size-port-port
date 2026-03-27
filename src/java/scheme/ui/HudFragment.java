@@ -261,24 +261,24 @@ public class HudFragment {
                 pad.setHeight(Scl.scl(mobiles.fliped ? 190.8f : 63.8f));
             });
         });
-        parent.fill(cont -> { // Minimap title
-            cont.name = "scheme-minimap-title";
-            cont.top();
-            cont.touchable = Touchable.disabled;
-            cont.visible(() -> ui.minimapfrag.shown());
+        //parent.fill(cont -> { // Minimap title
+        //    cont.name = "scheme-minimap-title";
+        //    cont.top();
+        //    cont.touchable = Touchable.disabled;
+        //    cont.visible(() -> ui.minimapfrag.shown());
+//
+        //    cont.label(() -> bundle.get("minimap")).style(Styles.outlineLabel).padTop(16f);
+        //});
 
-            cont.label(() -> bundle.get("minimap")).style(Styles.outlineLabel).padTop(16f);
-        });
-
-        parent.fill(cont -> { // Minimap back button
-            cont.name = "scheme-minimap-back";
-            cont.bottom();
-            cont.visible(() -> ui.minimapfrag.shown());
-
-            cont.button("@back", Icon.left, Styles.defaultt, ui.minimapfrag::toggle)
-                    .size(220f, 64f)
-                    .padBottom(16f);
-        });
+        //parent.fill(cont -> { // Minimap back button
+        //    cont.name = "scheme-minimap-back";
+        //    cont.bottom();
+        //    cont.visible(() -> ui.minimapfrag.shown());
+//
+        //    cont.button("@back", Icon.left, Styles.defaultt, ui.minimapfrag::toggle)
+        //            .size(220f, 64f)
+        //            .padBottom(16f);
+        //});
         Table info = getInfoTable();
         info.update(() -> info.setTranslation(0f, -Scl.scl(mobiles.fliped ? 190.5f : 63.5f)));
     }

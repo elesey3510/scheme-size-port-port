@@ -39,7 +39,7 @@ public class PlayerListFragment extends mindustry.ui.fragments.PlayerListFragmen
     @Override
     public void build(Group parent) {
         super.build(parent);
-        ui.hudGroup.getChildren().remove(11);
+       // ui.hudGroup.getChildren().remove(11);
 
         search = getSearch();
         Table pane = getPane(), menu = getMenu();
