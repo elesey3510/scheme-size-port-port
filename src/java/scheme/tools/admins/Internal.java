@@ -10,6 +10,7 @@ import mindustry.game.Rules;
 import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
+import mindustry.gen.Unit;
 import mindustry.world.Block;
 import mindustry.world.Tile;
 import mindustry.world.blocks.environment.Prop;
@@ -51,8 +52,9 @@ public class Internal implements AdminsTools {
         if (unusable()) return;
         unit.select(false, true, false, (target, team, unit, amount) -> {
             if (!canCreate(team, unit)) return;
-            target.unit().spawnedByCore(true);
-            target.unit(unit.spawn(team, target));
+            Unit spawned = unit.spawn(team, target);
+            spawned.spawnedByCore(true);
+            target.unit(spawned);
             units.refresh();
         });
     }
