@@ -1,8 +1,20 @@
 package scheme;
 
+import static arc.Core.app;
+import static arc.Core.assets;
+import static arc.Core.settings;
 import arc.graphics.g2d.Draw;
 import arc.util.Log;
 import arc.util.Tmp;
+import static mindustry.Vars.content;
+import static mindustry.Vars.control;
+import static mindustry.Vars.maxSchematicSize;
+import static mindustry.Vars.mods;
+import static mindustry.Vars.renderer;
+import static mindustry.Vars.schematics;
+import static mindustry.Vars.tilesize;
+import static mindustry.Vars.ui;
+import static mindustry.Vars.world;
 import mindustry.content.Blocks;
 import mindustry.game.Schematics;
 import mindustry.gen.Building;
@@ -13,16 +25,25 @@ import mindustry.ui.CoreItemsDisplay;
 import mindustry.world.Tile;
 import mindustry.world.blocks.distribution.Router;
 import mindustry.world.blocks.logic.LogicDisplay;
-import scheme.claj.client.dialogs.*;
+import mindustry.world.blocks.logic.TileableLogicDisplay;
+import static scheme.SchemeVars.builds;
+import static scheme.SchemeVars.corefrag;
+import static scheme.SchemeVars.hudfrag;
+import static scheme.SchemeVars.listfrag;
+import static scheme.SchemeVars.m_input;
+import static scheme.SchemeVars.m_schematics;
+import static scheme.SchemeVars.m_settings;
+import static scheme.SchemeVars.render;
+import static scheme.SchemeVars.schemas;
+import static scheme.SchemeVars.shortfrag;
+import static scheme.SchemeVars.units;
+import scheme.claj.client.dialogs.CreateClajRoomDialog;
+import scheme.claj.client.dialogs.JoinViaClajDialog;
 import scheme.moded.ModedGlyphLayout;
 import scheme.moded.ModedSchematics;
 import scheme.tools.MessageQueue;
 import scheme.tools.RainbowTeam;
 import scheme.ui.MapResizeFix;
-
-import static arc.Core.*;
-import static mindustry.Vars.*;
-import static scheme.SchemeVars.*;
 
 public class Main extends Mod {
 
@@ -33,7 +54,10 @@ public class Main extends Mod {
         maxSchematicSize = 512;
 
         // mod reimported through mods dialog
-        if (schematics.getClass().getSimpleName().startsWith("Moded")) return;
+        if (schematics instanceof ModedSchematics moded) {
+            m_schematics = moded;
+            return;
+        }
 
         assets.load(schematics = m_schematics = new ModedSchematics());
         assets.unload(Schematics.class.getSimpleName()); // prevent dual loading
@@ -106,13 +130,27 @@ public class Main extends Mod {
             }
         };
 
-        content.blocks().each(block -> block instanceof LogicDisplay, block -> block.buildType = () -> ((LogicDisplay) block).new LogicDisplayBuild() {
-            @Override
-            public void draw() {
-                super.draw();
-                if (render.borderless) Draw.draw(Draw.z(), () -> {
-                    Draw.rect(Draw.wrap(buffer.getTexture()), x, y, block.region.width * Draw.scl, -block.region.height * Draw.scl);
-                });
+        content.blocks().each(block -> block instanceof LogicDisplay, block -> {
+            if (block instanceof TileableLogicDisplay tileable) {
+                block.buildType = () -> tileable.new TileableLogicDisplayBuild() {
+                    @Override
+                    public void draw() {
+                        super.draw();
+                        if (render.borderless && buffer != null) Draw.draw(Draw.z(), () -> {
+                            Draw.rect(Draw.wrap(buffer.getTexture()), x, y, block.region.width * Draw.scl, -block.region.height * Draw.scl);
+                        });
+                    }
+                };
+            } else {
+                block.buildType = () -> ((LogicDisplay) block).new LogicDisplayBuild() {
+                    @Override
+                    public void draw() {
+                        super.draw();
+                        if (render.borderless && buffer != null) Draw.draw(Draw.z(), () -> {
+                            Draw.rect(Draw.wrap(buffer.getTexture()), x, y, block.region.width * Draw.scl, -block.region.height * Draw.scl);
+                        });
+                    }
+                };
             }
         });
 
